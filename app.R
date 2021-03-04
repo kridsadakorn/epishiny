@@ -8,14 +8,19 @@
 #
 # https://docs.rstudio.com/tutorials/user/using-python-with-rstudio-and-reticulate/
 # https://rstudio.github.io/shinydashboard/
+#
+# create new virtual environment
+# virtualenv .venv
+# activate virtual environment
 # source .venv/bin/activate
+
 
 library(shiny)
 library(reticulate)
 library(stringr)
 library(plotly)
 
-source_python("dist.py")
+source_python("interface_anndata.py")
 options(shiny.maxRequestSize=100*1024^2)
 
 # Define UI for application that draws a histogram
