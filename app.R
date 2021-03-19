@@ -21,7 +21,13 @@ library(stringr)
 library(plotly)
 
 source_python("interface_anndata.py")
-options(shiny.maxRequestSize=100*1024^2)
+options(shiny.maxRequestSize=5000*1024^2)
+
+#define global variables
+adata <- NULL
+filename1 <- NULL
+selected_data <- NULL
+#adata = get_anndata("/Users/kris/Desktop/Test/processed_windows_CG_luo_et_al_nov2020_paper_resubmission.h5ad")
 
 # Define UI for application that draws a histogram
 ui <- bootstrapPage(
@@ -35,7 +41,9 @@ ui <- bootstrapPage(
             fileInput("file1", "Choose h5ad file", accept = ".h5ad"),
             uiOutput('obsm_menu'),
             uiOutput('obs_menu'),
-            uiOutput('recal_menu')
+            uiOutput('recal_menu'),
+            downloadButton("saveAllData", "Save All Data"),
+            downloadButton("saveSelectedData", "Save Selected Data")
         ),
 
         # Show a plot of the generated distribution
@@ -48,8 +56,7 @@ ui <- bootstrapPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
     
-    adata = get_anndata("/Users/kris/Desktop/Test/processed_windows_CG_luo_et_al_nov2020_paper_resubmission.h5ad")
-    #adata = NULL
+    all_obsm = c('-','PCA 2D','PCA 3D','UMAP 2D','UMAP 3D','TSNE 2D','DRAW_GRAPH_FA 2D','DIFFMAP 2D','DIFFMAP 3D')
     
     output$obsm_menu = renderUI({
         if (is.null(adata)){
@@ -94,7 +101,6 @@ server <- function(input, output) {
                 }
             }
             strlist = str_replace(strlist,'X_','')
-            all_obsm = c('-','PCA 2D','PCA 3D','UMAP 2D','UMAP 3D','TSNE 2D','DRAW_GRAPH_FA 2D')
             strlist = setdiff(all_obsm,strlist)
             selectInput('obsm_recal_select', 'To calculate', strlist)
         }
@@ -116,7 +122,6 @@ server <- function(input, output) {
                 }
             }
             strlist = str_replace(strlist,'X_','')
-            all_obsm = c('-','PCA 2D','PCA 3D','UMAP 2D','UMAP 3D','TSNE 2D','DRAW_GRAPH_FA 2D')
             diffstrlist = setdiff(all_obsm,strlist)
             
             updateSelectInput(inputId = "obsm_select", choices = strlist, selected = input$obsm_recal_select)
@@ -126,12 +131,13 @@ server <- function(input, output) {
     })
     
     observeEvent(input$file1, {
-        ext <- tools::file_ext(input$file1$datapath)
+        filename1 <<- input$file1$datapath
+        ext <- tools::file_ext(filename1)
         
-        req(input$file1$datapath)
+        req(filename1)
         validate(need(ext == "h5ad", "Please upload a h5ad file"))
         
-        adata <- get_anndata(input$file1$datapath)
+        adata <<- get_anndata(filename1)
         
         menulist_obs = adata$obs_keys()
         menulist = adata$obsm_keys()
@@ -145,7 +151,6 @@ server <- function(input, output) {
             }
         }
         strlist = str_replace(strlist,'X_','')
-        all_obsm = c('-','PCA 2D','PCA 3D','UMAP 2D','UMAP 3D','TSNE 2D','DRAW_GRAPH_FA 2D')
         diffstrlist = setdiff(all_obsm,strlist)
         
         updateSelectInput(inputId = "obsm_select", choices = strlist, selected = strlist[1])
@@ -154,18 +159,44 @@ server <- function(input, output) {
     })
     
     output$mainPlot <- renderPlotly({
-        if (input$obsm_select != '-'){
+
+        if (input$obsm_select != '-' & input$obsm_select %in% all_obsm){
             select_obsm = str_split(tolower(input$obsm_select),' ',simplify = TRUE)
             obsm_idx = paste0('X_',select_obsm[1])
             dimension = select_obsm[2]
             
             if (dimension == "2d"){
-                plot_ly(x = adata$obsm[obsm_idx][,1], y = adata$obsm[obsm_idx][,2], color = adata$obs[,input$obs_select])
+                p <- plot_ly(x = adata$obsm[obsm_idx][,1], y = adata$obsm[obsm_idx][,2], key = adata$obs_names$to_list(), color = adata$obs[,input$obs_select]) %>%
+                    toWebGL()
             }else{
-                plot_ly(x = adata$obsm[obsm_idx][,1], y = adata$obsm[obsm_idx][,2], z = adata$obsm[obsm_idx][,3], color = adata$obs[,input$obs_select])
+                p <- plot_ly(x = adata$obsm[obsm_idx][,1], y = adata$obsm[obsm_idx][,2], z = adata$obsm[obsm_idx][,3], key = adata$obs_names$to_list(), color = adata$obs[,input$obs_select]) %>%
+                    add_markers(customdata = row.names(adata$obsm[obsm_idx])) %>%
+                    toWebGL()
             }
         }
     })
+    
+    output$saveAllData <-  downloadHandler(
+        filename = function() {
+            ext <- tools::file_ext(filename1)
+            paste0("download_all_data.", ext)
+        },
+        content = function(file) {
+            save_all_h5ad(adata,file)
+        }
+    )
+    
+    output$saveSelectedData <-  downloadHandler(
+        filename = function() {
+            ext <- tools::file_ext(filename1)
+            paste0("download_selected_data.", ext)
+        },
+        content = function(file) {
+            selected_data <<- event_data("plotly_selected")
+            print(selected_data)
+            save_sub_h5ad(adata, file, selected_data$key)
+        }
+    )
 }
 
 # Run the application 
