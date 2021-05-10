@@ -1,11 +1,42 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+#' a main function to start the application.
+#'
+#' @description This application was built based on the python package
+#' epiScanpy, the tool for single-cell epigenomic analysis (Danese et al. 2019).
+#' The application also provide the basic analysis functions such as clustering
+#' and plotting from the python package scanpy (Wolf, Angerer, and Theis 2018).
+#' Therefore, this function supports the input for both scRNA-seq and scATAC-seq.
+#' Note that The function requires no parameters and always returns NULL.
+#'
+#' @return NULL.
+#'
+#' @import shiny
+#' @import reticulate
+#' @import plotly
+#' @import stringr
+#'
+#' @export
+#' @md
+#'
+#' @references
+#'
+#' Danese, Anna, Maria L. Richter, David S. Fischer, Fabian J. Theis, and
+#' Maria Colomé-Tatché. 2019. “EpiScanpy: Integrated Single-Cell Epigenomic
+#' Analysis.” Preprint. Bioinformatics. https://doi.org/10.1101/648097.
+#'
+#' Wolf, F. Alexander, Philipp Angerer, and Fabian J. Theis. 2018. “SCANPY:
+#' Large-Scale Single-Cell Gene Expression Data Analysis.” Genome Biology 19
+#' (1): 15. https://doi.org/10.1186/s13059-017-1382-0.
+
+
+#'
+#'
+#' @example
+#'
+#' \dontrun{
+#' library(epiview)
+#' epiview()
+#' }
+#'
 
 # read this https://mastering-shiny.org/scaling-packaging.html
 # https://docs.rstudio.com/tutorials/user/using-python-with-rstudio-and-reticulate/
@@ -15,13 +46,6 @@
 # virtualenv .venv
 # activate virtual environment
 # source .venv/bin/activate
-
-
-library(shiny)
-library(reticulate)
-library(stringr)
-library(plotly)
-
 
 
 epiview <- function(...){
@@ -206,4 +230,5 @@ epiview <- function(...){
     # Run the application
     shinyApp(ui = ui, server = server)
 
+    return(NULL)
 }
