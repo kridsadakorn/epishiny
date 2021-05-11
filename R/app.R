@@ -57,25 +57,18 @@ epishiny <- function(...){
     options(shiny.maxRequestSize=5000*1024^2)
 
     ui <- bootstrapPage(
-
-        # Application title
-        titlePanel("Display options"),
-
-        # Sidebar with a slider input for number of bins
-        sidebarLayout(
-            sidebarPanel(
+        tabsetPanel(
+            tabPanel("Main",
                 fileInput("file1", "Choose h5ad file", accept = ".h5ad"),
                 uiOutput('obsm_menu'),
                 uiOutput('obs_menu'),
                 uiOutput('recal_menu'),
                 downloadButton("saveAllData", "Save All Data"),
-                downloadButton("saveSelectedData", "Save Selected Data")
-            ),
-
-            # Show a plot of the generated distribution
-            mainPanel(
+                downloadButton("saveSelectedData", "Save Selected Data"),
                 plotlyOutput("mainPlot")
-            )
+            ),
+            tabsetPanel("Layout"),
+            tabsetPanel("Pathway")
         )
     )
 
