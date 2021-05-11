@@ -57,24 +57,52 @@ epishiny <- function(...){
     options(shiny.maxRequestSize=5000*1024^2)
 
     ui <- bootstrapPage(
-
-        # Application title
-        titlePanel("Display options"),
-
-        # Sidebar with a slider input for number of bins
-        sidebarLayout(
-            sidebarPanel(
-                fileInput("file1", "Choose h5ad file", accept = ".h5ad"),
-                uiOutput('obsm_menu'),
-                uiOutput('obs_menu'),
-                uiOutput('recal_menu'),
-                downloadButton("saveAllData", "Save All Data"),
-                downloadButton("saveSelectedData", "Save Selected Data")
+        tabsetPanel(
+            tabPanel("Workspace",
+                sidebarLayout(
+                     sidebarPanel(
+                         fileInput("file1", "Choose h5ad file", accept = c(".h5ad",".csv",".rds")),
+                         fileInput("workspacefile", "Load workspace", accept = c(".rda")),
+                         downloadButton("saveWorkspace", "Save workspace"),
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainWorkspace")
+                     )
+                )
             ),
-
-            # Show a plot of the generated distribution
-            mainPanel(
-                plotlyOutput("mainPlot")
+            tabPanel("Interactive plot",
+                 sidebarLayout(
+                     sidebarPanel(
+                         uiOutput('obsm_menu'),
+                         uiOutput('obs_menu'),
+                         uiOutput('recal_menu'),
+                         downloadButton("saveAllData", "Save All Data"),
+                         downloadButton("saveSelectedData", "Save Selected Data")
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainInterative")
+                     )
+                 )
+            ),
+            tabPanel("Static plot",
+                 sidebarLayout(
+                     sidebarPanel(
+                         downloadButton("saveFigure", "Save figure")
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainStatic")
+                     )
+                 )
+            ),
+            tabPanel("Pathway",
+                 sidebarLayout(
+                     sidebarPanel(
+                         downloadButton("exportPathway", "Export")
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainPathway")
+                     )
+                 )
             )
         )
     )
@@ -114,7 +142,7 @@ epishiny <- function(...){
 
         output$recal_menu = renderUI({
             if (is.null(adata)){
-                selectInput('obsm_recal_select', 'To calculate', choices = c('-'))
+                selectInput('obsm_recal_select', 'Process', choices = c('-'))
             }else{
                 menulist = adata$obsm_keys()
                 strlist = c()
@@ -184,7 +212,7 @@ epishiny <- function(...){
             updateSelectInput(inputId = "obsm_recal_select", choices = diffstrlist, selected = diffstrlist[1])
         })
 
-        output$mainPlot <- renderPlotly({
+        output$mainInterative <- renderPlotly({
 
             if (input$obsm_select != '-' & input$obsm_select %in% all_obsm){
                 select_obsm = str_split(tolower(input$obsm_select),' ',simplify = TRUE)
