@@ -41,9 +41,10 @@ remotes::install_github("kridsadakorn/epishiny", dependencies = TRUE)
 
 ### Install Python libraries
 
-Without the virtual library, you can install EpiScanpy using pip:
+Without any virtual library, you can install required Python libraries using pip:
 
 ``` bash
+pip install igraph
 pip install episcanpy
 ```
 
@@ -73,5 +74,5 @@ Then, the shiny application will be launched:
 
 ## About
 
-* Maria Colomé-Tatché, visit  <a href="https://www.professoren.tum.de/en/tum-junior-fellows/c/maria-colome-tatche" border=0 style="border:0; text-decoration:none; outline:none"><img width="28px" src="man/figures/tum_logo.png" align="center" /></a> and <a href="https://www.helmholtz-muenchen.de/icb/institute/staff/staff/ma/4876/index.html" border=0 style="border:0; text-decoration:none; outline:none"><img width="42px" src="man/figures/hmgu_logo.png" align="center" /></a><br />
+* Maria Colomé-Tatché, visit <a href="https://www.helmholtz-muenchen.de/icb/institute/staff/staff/ma/4876/index.html" border=0 style="border:0; text-decoration:none; outline:none"><img width="42px" src="man/figures/hmgu_logo.png" align="center" /></a><br />
 * Kridsadakorn Chaichoompu, visit <a href="https://www.biostatgen.org/" border=0 style="border:0; text-decoration:none; outline:none"><img width="110px" src="man/figures/biostatgen_logo.png" align="center" /></a><br />

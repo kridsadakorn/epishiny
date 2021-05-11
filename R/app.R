@@ -61,7 +61,18 @@ epishiny <- function(...){
             tabPanel("Workspace",
                 sidebarLayout(
                      sidebarPanel(
-                         fileInput("file1", "Choose h5ad file", accept = ".h5ad"),
+                         fileInput("file1", "Choose h5ad file", accept = c(".h5ad",".csv",".rds")),
+                         fileInput("workspacefile", "Load workspace", accept = c(".rda")),
+                         downloadButton("saveWorkspace", "Save workspace"),
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainWorkspace")
+                     )
+                )
+            ),
+            tabPanel("Interactive plot",
+                 sidebarLayout(
+                     sidebarPanel(
                          uiOutput('obsm_menu'),
                          uiOutput('obs_menu'),
                          uiOutput('recal_menu'),
@@ -69,39 +80,27 @@ epishiny <- function(...){
                          downloadButton("saveSelectedData", "Save Selected Data")
                      ),
                      mainPanel(
-                         plotlyOutput("mainPlot")
-                     )
-                )
-            ),
-            tabPanel("Interactive",
-                 sidebarLayout(
-                     sidebarPanel(
-                         #uiOutput('obsm_menu'),
-                         #uiOutput('obs_menu'),
-                         #uiOutput('recal_menu'),
-                     ),
-                     mainPanel(
-                         plotlyOutput("mainPlot")
+                         plotlyOutput("mainInterative")
                      )
                  )
             ),
-            tabPanel("Static View",
+            tabPanel("Static plot",
                  sidebarLayout(
                      sidebarPanel(
-                         downloadButton("saveAllData", "Save All Data")
+                         downloadButton("saveFigure", "Save figure")
                      ),
                      mainPanel(
-                         plotlyOutput("mainPlot")
+                         plotlyOutput("mainStatic")
                      )
                  )
             ),
             tabPanel("Pathway",
                  sidebarLayout(
                      sidebarPanel(
-                         downloadButton("saveAllData", "Save All Data")
+                         downloadButton("exportPathway", "Export")
                      ),
                      mainPanel(
-                         plotlyOutput("mainPlot")
+                         plotlyOutput("mainPathway")
                      )
                  )
             )
@@ -213,7 +212,7 @@ epishiny <- function(...){
             updateSelectInput(inputId = "obsm_recal_select", choices = diffstrlist, selected = diffstrlist[1])
         })
 
-        output$mainPlot <- renderPlotly({
+        output$mainInterative <- renderPlotly({
 
             if (input$obsm_select != '-' & input$obsm_select %in% all_obsm){
                 select_obsm = str_split(tolower(input$obsm_select),' ',simplify = TRUE)
