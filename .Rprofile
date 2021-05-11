@@ -1,1 +1,1 @@
-Sys.setenv(RETICULATE_PYTHON = ".venv/bin/python")
+Sys.setenv(RETICULATE_PYTHON = "/opt/miniconda3/bin/python")

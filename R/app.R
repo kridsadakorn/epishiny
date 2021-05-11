@@ -1,4 +1,4 @@
-#' a main function to start the application.
+#' Main function to start EpiShiny
 #'
 #' @description This application was built based on the python package
 #' epiScanpy, the tool for single-cell epigenomic analysis (Danese et al. 2019).
@@ -7,7 +7,6 @@
 #' Therefore, this function supports the input for both scRNA-seq and scATAC-seq.
 #' Note that The function requires no parameters and always returns NULL.
 #'
-#' @return NULL.
 #'
 #' @import shiny
 #' @import reticulate
@@ -30,8 +29,7 @@
 
 #'
 #'
-#' @example
-#'
+#' @examples
 #' \dontrun{
 #' library(epiview)
 #' epiview()
@@ -48,9 +46,9 @@
 # source .venv/bin/activate
 
 
-epiview <- function(...){
+epishiny <- function(...){
     # Define UI for application that draws a histogram
-    python_file_path <- file.path(system.file(package="epiview"), "interface_anndata.py")
+    python_file_path <- file.path(system.file(package="epishiny"), "interface_anndata.py")
     source_python(python_file_path)
 
     adata <- NULL
@@ -230,5 +228,4 @@ epiview <- function(...){
     # Run the application
     shinyApp(ui = ui, server = server)
 
-    return(NULL)
 }

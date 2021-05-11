@@ -2,18 +2,22 @@ Package: epishiny
 Type: Package
 Title: Shiny application for EpiScanpy
 Version: 0.1.0
-Authors@R: Authors@R: c(person(given = "Kridsadakorn", family = "Chaichoompu", email = "kridsadakorn@biostatgen.org", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8123-3409")))
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Authors@R: c(person(given = "Kridsadakorn", family = "Chaichoompu", email = "kridsadakorn@biostatgen.org", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8123-3409")))
+Description: This Shiny application is built based on the python package 
+  epiScanpy, which is a tool for single-cell epigenomic analysis (Danese et al. 2019).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+BugReports: https://github.com/kridsadakorn/epishiny/issues
+URL: https://github.com/kridsadakorn/epishiny
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    reticulate,
     pkgload,
-    shiny
+    shiny,
+    plotly,
+    stringr
