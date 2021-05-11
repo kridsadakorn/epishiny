@@ -58,17 +58,53 @@ epishiny <- function(...){
 
     ui <- bootstrapPage(
         tabsetPanel(
-            tabPanel("Main",
-                fileInput("file1", "Choose h5ad file", accept = ".h5ad"),
-                uiOutput('obsm_menu'),
-                uiOutput('obs_menu'),
-                uiOutput('recal_menu'),
-                downloadButton("saveAllData", "Save All Data"),
-                downloadButton("saveSelectedData", "Save Selected Data"),
-                plotlyOutput("mainPlot")
+            tabPanel("Workspace",
+                sidebarLayout(
+                     sidebarPanel(
+                         fileInput("file1", "Choose h5ad file", accept = ".h5ad"),
+                         uiOutput('obsm_menu'),
+                         uiOutput('obs_menu'),
+                         uiOutput('recal_menu'),
+                         downloadButton("saveAllData", "Save All Data"),
+                         downloadButton("saveSelectedData", "Save Selected Data")
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainPlot")
+                     )
+                )
             ),
-            tabsetPanel("Layout"),
-            tabsetPanel("Pathway")
+            tabPanel("Interactive",
+                 sidebarLayout(
+                     sidebarPanel(
+                         #uiOutput('obsm_menu'),
+                         #uiOutput('obs_menu'),
+                         #uiOutput('recal_menu'),
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainPlot")
+                     )
+                 )
+            ),
+            tabPanel("Static View",
+                 sidebarLayout(
+                     sidebarPanel(
+                         downloadButton("saveAllData", "Save All Data")
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainPlot")
+                     )
+                 )
+            ),
+            tabPanel("Pathway",
+                 sidebarLayout(
+                     sidebarPanel(
+                         downloadButton("saveAllData", "Save All Data")
+                     ),
+                     mainPanel(
+                         plotlyOutput("mainPlot")
+                     )
+                 )
+            )
         )
     )
 
@@ -107,7 +143,7 @@ epishiny <- function(...){
 
         output$recal_menu = renderUI({
             if (is.null(adata)){
-                selectInput('obsm_recal_select', 'To calculate', choices = c('-'))
+                selectInput('obsm_recal_select', 'Process', choices = c('-'))
             }else{
                 menulist = adata$obsm_keys()
                 strlist = c()
