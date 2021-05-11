@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/kridsadakorn/epishiny/workflows/R-CMD-check/badge.svg)](https://github.com/kridsadakorn/epishiny/actions)
 <!-- badges: end -->
 
 This Shiny application is built based on the python package epiScanpy,
